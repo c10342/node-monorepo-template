@@ -1,0 +1,15 @@
+{
+  "name": "@lin-cli/utils",
+  "version": "0.0.0",
+  "description": "utils",
+  "author": "c10342",
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  }
+}
