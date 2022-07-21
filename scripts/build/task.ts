@@ -9,7 +9,7 @@ import { packagesPath, resolvePackages, resolveRoot, packages } from "../utils";
 const clean = (name: string) => () => {
   const cleanPath = resolvePackages(`./${name}/dist`);
   del(cleanPath, {
-    force: true,
+    force: true
   });
 };
 
@@ -18,7 +18,7 @@ const buildTs = (name: string) => () => {
   const srcPath = [
     `${packagesPath}/${name}/**/*.ts`,
     `!${packagesPath}/${name}/node_modules/**`,
-    `!${packagesPath}/${name}/__tests__/**`,
+    `!${packagesPath}/${name}/__tests__/**`
   ];
   const distPath = resolvePackages(`./${name}/dist`);
   return src(srcPath).pipe(tsProject()).js.pipe(dest(distPath));
@@ -34,7 +34,7 @@ export const watch = parallel(() => {
     const globsPath = [
       `../../packages/${name}/**/*.ts`,
       `!../../packages/${name}/node_modules/**`,
-      `!../../packages/${name}/__tests__/**`,
+      `!../../packages/${name}/__tests__/**`
     ];
 
     gulpWatch(globsPath, buildTs(name));
