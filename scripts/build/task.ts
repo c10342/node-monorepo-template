@@ -6,37 +6,50 @@ import del from "del";
 
 import { packagesPath, resolvePackages, resolveRoot, packages } from "../utils";
 
-const clean = (name: string) => () => {
-  const cleanPath = resolvePackages(`./${name}/dist`);
-  del(cleanPath, {
-    force: true
-  });
-};
-
-const buildTs = (name: string) => () => {
-  const tsProject = ts.createProject(resolveRoot("./tsconfig.json"));
-  const srcPath = [
+const globBuildFilePaths = (name: string) => {
+  return [
     `${packagesPath}/${name}/**/*.ts`,
     `!${packagesPath}/${name}/node_modules/**`,
     `!${packagesPath}/${name}/__tests__/**`
   ];
-  const distPath = resolvePackages(`./${name}/dist`);
-  return src(srcPath).pipe(tsProject()).js.pipe(dest(distPath));
+};
+
+const globsWatchFilePaths = (name: string) => {
+  return [
+    `../../packages/${name}/**/*.ts`,
+    `!../../packages/${name}/node_modules/**`,
+    `!../../packages/${name}/__tests__/**`
+  ];
+};
+
+const distPath = (name: string) => resolvePackages(`./${name}/dist`);
+
+const clean = (distPath: string) => () => {
+  return del(distPath, {
+    force: true
+  });
+};
+
+const buildTs = (targetPath: string | string[], distPath: string) => () => {
+  const tsProject = ts.createProject(resolveRoot("./tsconfig.json"));
+  return src(targetPath).pipe(tsProject()).js.pipe(dest(distPath));
+};
+
+const buildTsByName = (name: string) => {
+  return buildTs(globBuildFilePaths(name), distPath(name));
+};
+
+const clearDist = (name: string) => {
+  return clean(distPath(name));
 };
 
 export const build = series(
-  ...packages.map(clean),
-  parallel(...packages.map(buildTs))
+  ...packages.map(clearDist),
+  parallel(...packages.map(buildTsByName))
 );
 
 export const watch = parallel(() => {
   packages.forEach((name) => {
-    const globsPath = [
-      `../../packages/${name}/**/*.ts`,
-      `!../../packages/${name}/node_modules/**`,
-      `!../../packages/${name}/__tests__/**`
-    ];
-
-    gulpWatch(globsPath, buildTs(name));
+    gulpWatch(globsWatchFilePaths(name), buildTsByName(name));
   });
 });
