@@ -1,13 +1,15 @@
-module.exports = {
+const { defineConfig } = require("eslint-define-config");
+
+module.exports = defineConfig({
   env: {
     node: true
   },
-  parser: "@typescript-eslint/parser", //定义ESLint的解析器
+  parser: "@typescript-eslint/parser",
   extends: [
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
-  ], //定义文件继承的子规范
-  plugins: ["@typescript-eslint"], //定义了该eslint文件所依赖的插件
+  ],
+  plugins: ["@typescript-eslint"],
   rules: {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -16,4 +18,4 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-non-null-assertion": "off"
   }
-};
+});
